@@ -116,13 +116,49 @@
     padding-bottom:60px;
     position:relative;
   }
-  .hero-photo{
-  width:140px;
-  height:140px;
-  border-radius:50%;
-  object-fit:cover;
-  border:2px solid var(--cyan);
-  margin-bottom:24px;
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1.15fr 0.85fr;
+    gap:56px;
+    align-items:center;
+  }
+  @media (max-width:800px){
+    .hero-grid{ grid-template-columns:1fr; }
+    .hero-photo-wrap{ order:-1; max-width:280px; margin:0 auto 32px; }
+  }
+  .hero-photo-wrap{
+    position:relative;
+    border-radius:14px;
+    overflow:hidden;
+    border:1px solid var(--border);
+    aspect-ratio:4/5;
+    background:var(--surface);
+  }
+  .hero-photo-wrap::after{
+    content:'';
+    position:absolute; inset:0;
+    border:1px solid var(--cyan);
+    border-radius:14px;
+    outline:6px solid var(--bg);
+    outline-offset:10px;
+    pointer-events:none;
+  }
+  .hero-photo-wrap img{
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .hero-photo-tag{
+    position:absolute; bottom:14px; left:14px;
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--cyan);
+    background:rgba(18,24,31,0.75);
+    backdrop-filter:blur(4px);
+    padding:6px 10px;
+    border-radius:5px;
+    border:1px solid var(--border);
+    letter-spacing:.04em;
   }
   .hero-role{
     font-family:var(--font-mono);
@@ -313,15 +349,23 @@
 <!-- ============ HERO ============ -->
 <section class="hero">
   <div class="wrap">
-    <div class="hero-role reveal">/// Data Analyst &amp; Data Scientist</div>
-    <!-- EDIT: nama & tagline utama -->
-    <img src="assets/foto.png" alt="Khairan Dwieza Ansari" class="hero-photo">
-    <h1 class="reveal">Khairan Dwieza Ansari<br><span>Mengubah data mentah jadi keputusan bisnis.</span></h1>
-    <p class="lead reveal">Mahasiswa S1 Sains Data Telkom University. Terbiasa membangun pipeline data end-to-end — dari cleaning, modeling, hingga dashboard — untuk menjawab pertanyaan bisnis yang nyata.</p>
-    <div class="hero-cta reveal">
-      <a class="btn btn-primary" href="mailto:khairandwieza100@gmail.com">Hubungi Saya</a>
-      <a class="btn btn-ghost" href="https://github.com/khairandwieza" target="_blank" rel="noopener">Lihat GitHub</a>
-      <a class="btn btn-ghost" href="https://www.linkedin.com/in/khairan-dwieza-ansari/" target="_blank" rel="noopener">LinkedIn</a>
+    <div class="hero-grid">
+      <div>
+        <div class="hero-role reveal">/// Data Analyst &amp; Data Scientist</div>
+        <!-- EDIT: nama & tagline utama -->
+        <h1 class="reveal">Khairan Dwieza Ansari<br><span>Mengubah data mentah jadi keputusan bisnis.</span></h1>
+        <p class="lead reveal">Mahasiswa S1 Sains Data Telkom University. Terbiasa membangun pipeline data end-to-end — dari cleaning, modeling, hingga dashboard — untuk menjawab pertanyaan bisnis yang nyata.</p>
+        <div class="hero-cta reveal">
+          <a class="btn btn-primary" href="mailto:khairandwieza100@gmail.com">Hubungi Saya</a>
+          <a class="btn btn-ghost" href="https://github.com/khairandwieza" target="_blank" rel="noopener">Lihat GitHub</a>
+          <a class="btn btn-ghost" href="https://www.linkedin.com/in/khairan-dwieza-ansari/" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+      <!-- EDIT: ganti src foto di bawah ini dengan path foto kamu, misal assets/foto.jpg -->
+      <div class="hero-photo-wrap reveal">
+        <img src="assets/foto.jpg" alt="Foto Khairan Dwieza Ansari">
+        <span class="hero-photo-tag">Bandung, ID</span>
+      </div>
     </div>
   </div>
 
