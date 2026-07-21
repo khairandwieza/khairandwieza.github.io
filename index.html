@@ -250,7 +250,7 @@
 <!-- ============ NAVBAR ============ -->
 <header class="nav" id="top">
   <div class="nav-inner">
-    <a class="nav-brand" href="#top">Khairan Dwieza Ansari</a>
+    <a class="nav-brand" href="#" id="homeLink">Khairan Dwieza Ansari</a>
     <nav class="nav-links">
       <a href="#about">About</a>
       <a href="#experience">Experience</a>
@@ -270,8 +270,8 @@
       <div>
         <div class="hero-role reveal">Data Analyst &amp; Data Scientist</div>
         <!-- EDIT: name & main tagline -->
-        <h1 class="reveal">Khairan Dwieza Ansari</h1>
-        <p class="lead reveal">Data Science undergraduate at Telkom University. Experienced in building end-to-end data pipelines from cleaning and modeling to dashboards to answer real business questions.</p>
+        <h1 class="reveal">Khairan Dwieza Ansari — <em>turning raw data into business decisions.</em></h1>
+        <p class="lead reveal">Data Science undergraduate at Telkom University. Experienced in building end-to-end data pipelines — from cleaning and modeling to dashboards — to answer real business questions.</p>
         <div class="hero-cta reveal">
           <a class="btn btn-primary" href="mailto:khairandwieza100@gmail.com">Contact Me</a>
           <a class="btn btn-ghost" href="https://github.com/khairandwieza" target="_blank" rel="noopener">View GitHub</a>
@@ -291,12 +291,12 @@
         <div class="career-node">
           <div class="career-year">Jun 2024</div>
           <div class="career-role">External Division Staff Intern</div>
-          <div class="career-org">HIMADS Telkom University</div>
+          <div class="career-org">HMSD Telkom University</div>
         </div>
         <div class="career-node">
           <div class="career-year">Jan 2025</div>
           <div class="career-role">Head of External Department</div>
-          <div class="career-org">HIMADS Telkom University</div>
+          <div class="career-org">HMSD Telkom University</div>
         </div>
         <div class="career-node is-current">
           <div class="career-year">Jul 2026</div>
@@ -495,7 +495,7 @@
     <div class="edu-grid reveal">
       <div class="edu-card">
         <div class="tl-date">2023 — Present</div>
-        <h3>S.Si.D in Data Science</h3>
+        <h3>B.Sc. in Data Science</h3>
         <p>Telkom University · GPA 3.63/4.00 · ECCT Score 3.75 · EPrT Score 487</p>
       </div>
       <div class="edu-card">
@@ -535,6 +535,12 @@
 
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
+
+  // ===== SCROLL TO TOP (klik nama di nav) =====
+  document.getElementById('homeLink').addEventListener('click', (e)=>{
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 
   // ===== CUSTOM CURSOR =====
   (function(){
