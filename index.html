@@ -208,12 +208,6 @@
   .edu-card p{ color:var(--text-muted); font-size:14px; }
   .edu-card .chip-row{ margin-top:12px; }
 
-  /* ---------- TESTIMONIAL PLACEHOLDER ---------- */
-  .testi-box{
-    background:var(--bg-soft); border:1px dashed var(--border); border-radius:10px;
-    padding:32px; text-align:center; color:var(--text-dim); font-family:var(--font-mono); font-size:13px;
-  }
-
   /* ---------- FOOTER ---------- */
   footer{ border-top:1px solid var(--border); padding:80px 0 40px; }
   .footer-inner{ text-align:center; }
@@ -231,6 +225,23 @@
     html{ scroll-behavior:auto; }
     .reveal{ opacity:1; transform:none; transition:none; }
   }
+
+  /* ---------- CUSTOM CURSOR ---------- */
+  /* EDIT: cursor color is white with mix-blend-mode:difference, so it auto-adapts
+     (looks dark on light backgrounds, light on dark backgrounds) — no need to
+     hand-pick a color per section. Only enabled on mouse devices (not touch). */
+  @media (pointer: fine){
+    body{ cursor:none; }
+    a, button{ cursor:none; }
+  }
+  .cursor-dot{
+    position:fixed; top:0; left:0; width:14px; height:14px; border-radius:50%;
+    background:#fff; mix-blend-mode:difference; pointer-events:none; z-index:9999;
+    transform:translate(-50%,-50%); transition:width .18s ease, height .18s ease;
+    will-change:transform;
+  }
+  .cursor-dot.is-hover{ width:34px; height:34px; }
+  @media (pointer: coarse){ .cursor-dot{ display:none; } }
 </style>
 </head>
 <body>
@@ -504,18 +515,6 @@
   </div>
 </section>
 
-<!-- ============ TESTIMONIAL (placeholder — fill in manually, don't publish before getting a real quote) ============ -->
-<section id="testimonial">
-  <div class="wrap">
-    <div class="section-head reveal"><h2>Testimonial</h2></div>
-    <div class="testi-box reveal">
-      <!-- EDIT: replace this section with a real quote from a thesis advisor or internship supervisor, including their name and title. Don't publish until you actually have their quote and permission. -->
-      Space reserved for a testimonial from a thesis advisor or internship supervisor.<br>
-      Ask for a short quote + permission to include their name and title, then replace this placeholder text.
-    </div>
-  </div>
-</section>
-
 <!-- ============ CONTACT / FOOTER ============ -->
 <footer id="contact">
   <div class="wrap footer-inner reveal">
@@ -531,8 +530,26 @@
   </div>
 </footer>
 
+<div class="cursor-dot" id="cursorDot"></div>
+
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
+
+  // ===== CUSTOM CURSOR =====
+  (function(){
+    if(!window.matchMedia('(pointer: fine)').matches) return;
+    const dot = document.getElementById('cursorDot');
+    let mx = -100, my = -100;
+    window.addEventListener('mousemove', (e)=>{
+      mx = e.clientX; my = e.clientY;
+      dot.style.transform = `translate3d(${mx}px, ${my}px, 0) translate(-50%,-50%)`;
+    });
+    const hoverTargets = document.querySelectorAll('a, button, .filter-btn, .proj-card');
+    hoverTargets.forEach(el=>{
+      el.addEventListener('mouseenter', ()=>dot.classList.add('is-hover'));
+      el.addEventListener('mouseleave', ()=>dot.classList.remove('is-hover'));
+    });
+  })();
 
   // reveal-on-scroll
   const revealEls = document.querySelectorAll('.reveal');
@@ -559,15 +576,26 @@
   });
 
   // ===== PARTICLE NETWORK ANIMATION IN HERO =====
-  // EDIT: change PARTICLE_COUNT for more/fewer dots, LINK_DIST for connecting-line distance
+  // EDIT: change PARTICLE_COUNT for more/fewer dots, LINK_DIST for connecting-line distance,
+  // REPEL_RADIUS/REPEL_STRENGTH for how strongly particles dodge the cursor
   (function(){
     const canvas = document.getElementById('netCanvas');
     const ctx = canvas.getContext('2d');
     const heroEl = document.querySelector('.hero');
     let W, H, particles = [];
-    const PARTICLE_COUNT = 55;
-    const LINK_DIST = 130;
+    const PARTICLE_COUNT = 100;
+    const LINK_DIST = 150;
     const SPEED = 0.18;
+    const REPEL_RADIUS = 130;
+    const REPEL_STRENGTH = 1.8;
+
+    let mouseX = -9999, mouseY = -9999;
+    heroEl.addEventListener('mousemove', (e)=>{
+      const rect = heroEl.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+    });
+    heroEl.addEventListener('mouseleave', ()=>{ mouseX = -9999; mouseY = -9999; });
 
     function resize(){
       W = canvas.width = heroEl.offsetWidth;
@@ -579,7 +607,7 @@
         y: Math.random() * H,
         vx: (Math.random() - 0.5) * SPEED,
         vy: (Math.random() - 0.5) * SPEED,
-        r: Math.random() * 1.4 + 1
+        r: Math.random() * 1.5 + 1
       }));
     }
     function step(){
@@ -590,8 +618,8 @@
           const dx = a.x - b.x, dy = a.y - b.y;
           const dist = Math.sqrt(dx*dx + dy*dy);
           if(dist < LINK_DIST){
-            ctx.strokeStyle = `rgba(47,93,80,${0.14 * (1 - dist/LINK_DIST)})`;
-            ctx.lineWidth = 1;
+            ctx.strokeStyle = `rgba(47,93,80,${0.22 * (1 - dist/LINK_DIST)})`;
+            ctx.lineWidth = 1.2;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
@@ -603,9 +631,20 @@
         p.x += p.vx; p.y += p.vy;
         if(p.x < 0 || p.x > W) p.vx *= -1;
         if(p.y < 0 || p.y > H) p.vy *= -1;
+
+        // dodge the cursor
+        const dx = p.x - mouseX, dy = p.y - mouseY;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist < REPEL_RADIUS){
+          const force = (REPEL_RADIUS - dist) / REPEL_RADIUS * REPEL_STRENGTH;
+          const angle = Math.atan2(dy, dx);
+          p.x += Math.cos(angle) * force;
+          p.y += Math.sin(angle) * force;
+        }
+
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-        ctx.fillStyle = 'rgba(184,134,59,0.45)';
+        ctx.fillStyle = 'rgba(184,134,59,0.5)';
         ctx.fill();
       });
       requestAnimationFrame(step);
